@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
-import { Card, Icon, Rating, Input } from 'react-native-elements';
+import { Card, Icon, Rating, Input, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorite, postComment } from '../redux/ActionCreators';
@@ -133,7 +133,6 @@ class CampsiteInfo extends Component {
         const comments = this.props.comments.comments.filter(comment => comment.campsiteId === campsiteId);
         return (
             <ScrollView>
-
                 <RenderCampsite campsite={campsite}
                     favorite={this.props.favorites.includes(campsiteId)}
                     markFavorite={() => this.markFavorite(campsiteId)}
@@ -180,9 +179,7 @@ class CampsiteInfo extends Component {
                                     <Button
                                         color='#5637DD'
                                         title='Submit'
-                                        // style={{ margin: 10 }}
                                         onPress={() => {
-                                            this.toggleModal();
                                             this.handleComment(campsiteId);
                                             this.resetForm();
                                         }}

@@ -15,7 +15,7 @@ const mapStateToProps = state => {
 }
 
 
-const Mission = (props) =>{
+const Mission = () =>{
     return (
         <Card title='Our Mission' wrapperStyle={{ margin: 20 }}>
             <Text>
