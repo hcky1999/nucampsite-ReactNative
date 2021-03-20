@@ -26,6 +26,9 @@ const mapDispatchToProps = {
 function RenderCampsite(props) {
     
     const { campsite } = props;
+
+    //same as get-element-byid use creatRef()
+    const view = React.createRef();
     
     //dx means a differential or distance of a gesture across the x-axis
     // -200 pixel based on the horizontaldrag negative value is smaller and 100 or + is bigger 
@@ -33,6 +36,12 @@ function RenderCampsite(props) {
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+        
+        //add a panhandlerGrant is a handler that is triggered when a gesture is first recognize
+        onPanResponderGrant: () => {
+            view.current.rubberBand(1000)
+            .then(endState => console.log(endState.finished ? 'finished': 'canceled'))
+        },
         onPanResponderEnd: (e, gestureState) => {
             console.log('pan responder end', gestureState);
             if (reconizeDrag(gestureState)){
@@ -65,6 +74,7 @@ function RenderCampsite(props) {
             animation='fadeInDown' 
             duration={2000} 
             delay={1000}
+            ref={view}
             {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
