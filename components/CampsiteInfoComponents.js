@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, Modal, Button, StyleSheet } from 'react-native';
+import {
+    Text, View, ScrollView, FlatList,
+    Modal, Button, StyleSheet, Alert, PanResponder
+} from 'react-native';
 import { Card, Icon, Rating, Input, Badge } from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
@@ -21,10 +24,48 @@ const mapDispatchToProps = {
 };
 
 function RenderCampsite(props) {
+    
     const { campsite } = props;
+    
+    //dx means a differential or distance of a gesture across the x-axis
+    // -200 pixel based on the horizontaldrag negative value is smaller and 100 or + is bigger 
+    const reconizeDrag =({dx}) => (dx < -200) ? true: false;
+
+    const panResponder = PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onPanResponderEnd: (e, gestureState) => {
+            console.log('pan responder end', gestureState);
+            if (reconizeDrag(gestureState)){
+                Alert.alert(
+                    'Add Favorite',
+                    'Are you sure you wish to add'+ campsite.name+ 'to favorite',
+                    [
+                        {
+                            text: 'Cancel',
+                            style: 'cancel',
+                            onPress: () => console.log('Cancel Pressed')
+                        },
+                        {
+                            text: 'OK',
+                            onPress: () => props.favorite ?
+                                console.log('Already set as Favorite') : props.markFavorite()
+
+                        }
+                    ],
+                    {cancelable: false}
+                );
+            }
+            return true;
+        }
+    });
+
     if (campsite) {
         return (
-            <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+            <Animatable.View 
+            animation='fadeInDown' 
+            duration={2000} 
+            delay={1000}
+            {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
                     image={{ uri: baseUrl + campsite.image }}>
