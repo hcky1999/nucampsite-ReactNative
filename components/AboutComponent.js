@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 // no need a curly braces => default export
 import Loading from './LoadingComponent';
+import * as Animatable from 'react-native-animatable';
 
 
 
@@ -54,27 +55,30 @@ class About extends Component{
         if(this.props.partners.errMess){
             return (      
             <ScrollView>
+                <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+                    <Card 
+                        title='Community Partners'>
+                        <Text> {this.props.partners.errMess}</Text>     
+                    </Card>
+                </Animatable.View>
                 <Mission />
-                <Card 
-                    title='Community Partners'>
-                    <Text> {this.props.partners.errMess}</Text>     
-                </Card>
             </ScrollView> 
             );
         }
         return (      
             <ScrollView>
+                <Animatable.View animation='fadeInDown' duration={2000} delay={1000}>
+                    <Card title='Community Partners'>
+                        <FlatList
+                            data={this.props.partners.partners}
+                            renderItem={renderPartner}
+                            keyExtractor={ (item) => item.id.toString()}
+                        />
+                    </Card>               
+                </Animatable.View>
                 <Mission />
-                <Card title='Community Partners'>
-                    <FlatList
-                        data={this.props.partners.partners}
-                        renderItem={renderPartner}
-                        keyExtractor={ (item) => item.id.toString()}
-                    />
-                </Card>
             </ScrollView> 
             );
-
     };
 };
 export default connect(mapStateToProps)(About);
