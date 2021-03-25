@@ -24,30 +24,34 @@ const mapDispatchToProps = {
 };
 
 function RenderCampsite(props) {
-    
+
     const { campsite } = props;
 
     //same as get-element-byid use creatRef()
     const view = React.createRef();
-    
+
     //dx means a differential or distance of a gesture across the x-axis
     // -200 pixel based on the horizontaldrag negative value is smaller and 100 or + is bigger 
-    const reconizeDrag =({dx}) => (dx < -200) ? true: false;
+    const recognizeDrag = ({ dx }) => (dx < -200) ? true : false;
+
+    //Open the campsite comment 
+    const recognizeComment = ({ dx }) => (dx > 200) ? true : false;
+
 
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
-        
+
         //add a panhandlerGrant is a handler that is triggered when a gesture is first recognize
         onPanResponderGrant: () => {
             view.current.rubberBand(1000)
-            .then(endState => console.log(endState.finished ? 'finished': 'canceled'))
+                .then(endState => console.log(endState.finished ? 'finished' : 'canceled'))
         },
         onPanResponderEnd: (e, gestureState) => {
             console.log('pan responder end', gestureState);
-            if (reconizeDrag(gestureState)){
+            if (recognizeDrag(gestureState)) {
                 Alert.alert(
                     'Add Favorite',
-                    'Are you sure you wish to add'+ campsite.name+ 'to favorite',
+                    'Are you sure you wish to add' + campsite.name + 'to favorite',
                     [
                         {
                             text: 'Cancel',
@@ -61,21 +65,23 @@ function RenderCampsite(props) {
 
                         }
                     ],
-                    {cancelable: false}
+                    { cancelable: false }
                 );
+            }
+            else if (recognizeComment(gestureState)) {
+                props.onShowModal();
             }
             return true;
         }
     });
-
     if (campsite) {
         return (
-            <Animatable.View 
-            animation='fadeInDown' 
-            duration={2000} 
-            delay={1000}
-            ref={view}
-            {...panResponder.panHandlers}>
+            <Animatable.View
+                animation='fadeInDown'
+                duration={2000}
+                delay={1000}
+                ref={view}
+                {...panResponder.panHandlers}>
                 <Card
                     featuredTitle={campsite.name}
                     image={{ uri: baseUrl + campsite.image }}>
