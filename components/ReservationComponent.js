@@ -5,6 +5,11 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import * as Animatable from 'react-native-animatable';
+import * as Notifications from 'expo-notifications';
+
+
+
+
 
 class Reservation extends Component {
 
@@ -43,6 +48,7 @@ class Reservation extends Component {
                     text: "Cancel",
                     style: "cancel",
                     onPress: () => {
+                        this.presentLocalNotification(this.state.date.toLocaleDateString('en-US'));
                         this.resetForm();
                         console.log ("CANCEL RESERVATION")
                     },
@@ -70,6 +76,39 @@ resetForm() {
     });
 };
 
+//requested reservation date
+async presentLocalNotification(date){
+    function sendNotification(){
+
+        //overide the default behavior show notification alert using the function below
+        Notifications.setNotificationHandler({
+            handleNotification: async () => ({
+                shouldShowAlert: true
+            })
+        });
+
+        //provided notification API
+        Notifications.scheduleNotificationAsync({
+            content: {
+                title: `Your Campsite Reservation Search`,
+                body: `Search for ${date} requested`
+            },
+            //another property "trigger" set to null will cause a notification to fire immediately or can also be set in the future
+            trigger: null
+        });
+    }
+    //check permission  is available
+    //"await" can only be used inside async function / similar concept to a "then" method use it 
+    //followed by a "promise"
+
+    let permissions = await Notifications.getPermissionsAsync();
+    if (!permissions.granted){
+        permissions = await Notifications.requestPermissionsAsync();
+    }
+    if (permissions.granted){
+        sendNotification()
+    }
+}
 
 render() {
     return (
